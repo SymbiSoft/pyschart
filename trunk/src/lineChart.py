@@ -63,6 +63,7 @@ class LineChart:
         self._scale_x = float(right - left)/(max_x-self.min_x)
         self._scale_y = float(bottom - top)/(max_y-self.min_y)
         self._view.clear()
+        self._view.rectangle([(left,top),(right,bottom)],0,fill = color_rect)
         
           
      
