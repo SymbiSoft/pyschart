@@ -18,10 +18,11 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 from __future__ import generators
+from graphics import *
 from appuifw import *
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.2
+# @version 0.4
 # @date:  26/10/2008
 
 class LineChart:
@@ -90,7 +91,7 @@ class LineChart:
             self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
         
         for y in self.__arange(self._min_y,max_y,step_y):
-            self._view.text((2, self.bottom+2-self.scale_y*(y-self.min_y)), unicode(formatter(y)))
+            self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(formatter(y)), font= ('normal',9,FONT_BOLD))
             for i in range(left,right,3):            
                 self._view.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
                 self._view.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
