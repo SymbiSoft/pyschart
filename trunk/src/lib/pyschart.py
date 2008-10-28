@@ -48,7 +48,7 @@ class LineChart:
     
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self):
-        self._position = [26,self._height-19,self._width-10,10]
+        self._position = [28,self._height-19,self._width-10,10]
            
      
     ## Iterator for generate random numbers
@@ -91,11 +91,10 @@ class LineChart:
             self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
         
         for y in self.__arange(self._min_y,max_y,step_y):
-            self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(formatter(y)), font= ('normal',9,FONT_BOLD))
+            self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(formatter(y)), font= ('normal',10,FONT_BOLD))
             for i in range(left,right,3):            
                 self._view.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
                 self._view.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
             self._view.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
-            self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)
-
+            self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)  
             
