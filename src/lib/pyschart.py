@@ -31,10 +31,9 @@ class LineChart:
     # @param canvas: The graphics component
     # @param xyrange: The list with x and y range [min_x,max_x,step_x,min_y,max_y,step_y]
     # @param subtitle: the subtitle for x axe
-    # @param colorLine: The color of the line
     # @param colorBack: The background color
     # @param formatter: The format of the series composed in the chart
-    def __init__(self,canvas,xyrange,subtitle="",colorLine=(255,0,0),
+    def __init__(self,canvas,xyrange,subtitle="",
                   colorBack=(255,255,255),formatter=lambda x:x):
         self._view = canvas
         self._width,self._height = self._view.size
@@ -97,4 +96,23 @@ class LineChart:
                 self._view.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
             self._view.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
             self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)  
+            
+            
+    ## Plot the real graph
+        #  @param self The object pointer.  
+        #  @param xs: The list with x series 
+        #  @param ys: The list with the y series
+        #  @param color: The color used to fill the line     
+    def plot(self,xs,ys=None,color = (255,0,0)):
+        if ys == None:
+            ys = xs
+            xs = range(len(ys))
+        left,bottom,right,top = self._position
+        last = left + (xs[0] - self._min_x) * self._scale_x, bottom - (ys[0]-self._min_y) * self._scale_y    
+        for i in range(1, len(ys)):
+            p = left + (xs[i] - self._min_x) * self._scale_x, bottom - (ys[i]-self._min_y) * self._scale_y 
+            self._view.line([last, p], color)
+            last = p
+        self._view.point(last,color)
+       
             
