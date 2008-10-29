@@ -22,8 +22,8 @@ from graphics import *
 from appuifw import *
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.15
-# @date:  28/10/2008
+# @version 0.4
+# @date:  26/10/2008
 
 class LineChart:
     
@@ -41,13 +41,14 @@ class LineChart:
         self._min_x = None
         self._min_y = None
         self._scale_x = None
+        self._subtitle = unicode(subtitle)
         self._scale_y = None        
         self._setPosition(xyrange)
         self._set_axes(xyrange,colorBack,formatter)
     
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self,xyrange):
-        left = self._view.measure_text(u"" + str(float(xyrange[4])), font=('normal',10,FONT_BOLD))[1]
+        left = self._view.measure_text(unicode(float(xyrange[4])), font=('normal',10,FONT_BOLD))[1]
         self._position = [left+2,self._height-40,self._width-10,10]
         
      
@@ -97,7 +98,9 @@ class LineChart:
                 self._view.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
                 self._view.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
             self._view.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
-            self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)  
+            self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)
+            
+       
             
             
     ## Plot the real graph
@@ -116,5 +119,9 @@ class LineChart:
             self._view.line([last, p], color)
             last = p
         self._view.point(last,color)
+
+        #The subtitle
+        self._view.rectangle([(2,bottom+17),(15,self._height-4)],0,fill = color )
+        self._view.text((17,self._height-5), self._subtitle, font= ('normal',13))
        
             
