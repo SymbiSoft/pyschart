@@ -22,8 +22,8 @@ from graphics import *
 from appuifw import *
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.4
-# @date:  26/10/2008
+# @version 0.15
+# @date:  28/10/2008
 
 class LineChart:
     
@@ -42,13 +42,15 @@ class LineChart:
         self._min_y = None
         self._scale_x = None
         self._scale_y = None        
-        self._setPosition()
+        self._setPosition(xyrange)
         self._set_axes(xyrange,colorBack,formatter)
     
     ##Defines the ranges of the graph in the screen.
-    def _setPosition(self):
-        self._position = [28,self._height-19,self._width-10,10]
-           
+    def _setPosition(self,xyrange):
+        left = self._view.measure_text(u"" + str(float(xyrange[4])), font=('normal',10,FONT_BOLD))[1]
+        self._position = [left+2,self._height-40,self._width-10,10]
+        
+     
      
     ## Iterator for generate random numbers
     #  @param self The object pointer.  
