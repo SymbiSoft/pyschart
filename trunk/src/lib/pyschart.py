@@ -20,6 +20,7 @@
 from __future__ import generators
 from graphics import *
 from appuifw import *
+import key_codes
 
 # linechart.py - Line Chart Plotter for PyS60
 # @version 0.4
@@ -36,6 +37,8 @@ class LineChart:
     def __init__(self,canvas,xyrange,subtitle="",
                   colorBack=(255,255,255),formatter=lambda x:x):
         self._view = canvas
+        self._view.bind(key_codes.EKeyLeftArrow,lambda: self._traverse(1))
+        self._view.bind(key_codes.EKeyRightArrow,lambda: self._traverse(0))
         self._width,self._height = self._view.size
         self._position = None
         self._min_x = None
@@ -45,7 +48,12 @@ class LineChart:
         self._scale_y = None        
         self._setPosition(xyrange)
         self._set_axes(xyrange,colorBack,formatter)
-    
+
+
+    ##Callback method for key events (navigates into the chart)
+    def _traverse(self,code):
+           print code
+
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self,xyrange):
         left = self._view.measure_text(unicode(float(xyrange[4])), font=('normal',10,FONT_BOLD))[1]
