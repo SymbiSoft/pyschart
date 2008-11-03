@@ -47,13 +47,22 @@ class LineChart:
         self._subtitle = unicode(subtitle)
         self._scale_y = None
         self._axe_x = 0
+        self._actual_pos = 0
         self._setPosition(xyrange)
         self._set_axes(xyrange,colorBack,formatter)
 
 
     ##Callback method for key events (navigates into the chart)
     def _traverse(self,code):
-           print self._axe_x
+        #left
+        if code: 
+            if self._actual_pos > 0: 
+                self._actual_pos -= 1
+        #right
+        else:
+            if self._actual_pos < self._axe_x + 1:
+                self._actual_pos += 1
+                
 
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self,xyrange):
