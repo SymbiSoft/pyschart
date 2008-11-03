@@ -45,14 +45,15 @@ class LineChart:
         self._min_y = None
         self._scale_x = None
         self._subtitle = unicode(subtitle)
-        self._scale_y = None        
+        self._scale_y = None
+        self._axe_x = 0
         self._setPosition(xyrange)
         self._set_axes(xyrange,colorBack,formatter)
 
 
     ##Callback method for key events (navigates into the chart)
     def _traverse(self,code):
-           print code
+           print self._axe_x
 
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self,xyrange):
@@ -99,7 +100,8 @@ class LineChart:
                 self._view.point((left+self._scale_x*(x-self._min_x),z+1), 0)                 
             self._view.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
             self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
-        
+            self._axe_x +=1
+            
         for y in self.__arange(self._min_y,max_y,step_y):
             self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(formatter(y)), font= ('normal',10,FONT_BOLD))
             for i in range(left,right,3):            
