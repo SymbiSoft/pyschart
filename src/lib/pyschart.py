@@ -23,8 +23,8 @@ from appuifw import *
 import key_codes
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.4
-# @date:  26/10/2008
+# @version 0.5
+# @date:  03/11/2008
 
 class LineChart:
     
@@ -62,7 +62,7 @@ class LineChart:
         else:
             if self._actual_pos < self._axe_x + 1:
                 self._actual_pos += 1
-                
+               
 
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self,xyrange):
@@ -76,7 +76,7 @@ class LineChart:
     #  @param start: The first number of the series
     #  @param stop: The last number of the series
     #  @param step:  The incrementator given
-    def __arange(self,start, stop=None, step=None):
+    def _arange(self,start, stop=None, step=None):
         if stop is None:
             stop = float(start)
             start = 0.0
@@ -88,7 +88,7 @@ class LineChart:
             cur+= step
      
      
-     ## Plotthe chart axes.
+     ## Plot chart axes.
       # @param self The object pointer.
       # @param xyrange: The list with x and y range [min_x,max_x,step_x,min_y,max_y,step_y]
       # @param colorBack: The color used to fill the chart
@@ -101,17 +101,26 @@ class LineChart:
         self._scale_y = float(bottom - top)/(max_y-self._min_y)
         self._view.clear()
         self._view.rectangle([(left,top),(right+1,bottom+1)],0,fill = colorBack)
+        self._axe_x = 0
+        for x in self._arange(self._min_x,max_x,step_x):
 
-        for x in self.__arange(self._min_x,max_x,step_x):
-            #self._view.text((14+self._scale_x*(x-self._min_x), self._height-1), unicode(formatter(x)))         
+            if self._axe_x == self._actual_pos:
+                color_line = (255,0,0)
+               # self._view.text((left+self._scale_x*(x-self._min_x)-5, top+10), unicode(formatter(x)), font= ('normal',10,FONT_BOLD))
+               
+            else:
+                color_line = (0,0,0)
+            
+            #self._view.text((15+self._scale_x*(x-self._min_x), self._height-24), unicode(formatter(x)), font= ('normal',10,FONT_BOLD))
             for z in range(top,bottom,3):
-                self._view.point((left+self._scale_x*(x-self._min_x),z),0)
-                self._view.point((left+self._scale_x*(x-self._min_x),z+1), 0)                 
+                self._view.point((left+self._scale_x*(x-self._min_x),z), outline = color_line)
+                self._view.point((left+self._scale_x*(x-self._min_x),z+1), outline = color_line)
+                
             self._view.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
             self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
             self._axe_x +=1
             
-        for y in self.__arange(self._min_y,max_y,step_y):
+        for y in self._arange(self._min_y,max_y,step_y):
             self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(formatter(y)), font= ('normal',10,FONT_BOLD))
             for i in range(left,right,3):            
                 self._view.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
