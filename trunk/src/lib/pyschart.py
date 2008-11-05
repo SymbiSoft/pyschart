@@ -23,8 +23,8 @@ from appuifw import *
 import key_codes
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.5
-# @date:  03/11/2008
+# @version 0.4
+# @date:  26/10/2008
 
 class LineChart:
     
@@ -40,6 +40,7 @@ class LineChart:
         self._view.bind(key_codes.EKeyLeftArrow,lambda: self._traverse(1))
         self._view.bind(key_codes.EKeyRightArrow,lambda: self._traverse(0))
         self._width,self._height = self._view.size
+        self._img = Image.new((self._width,self._height))
         self._position = None
         self._min_x = None
         self._min_y = None
@@ -58,6 +59,7 @@ class LineChart:
         if code: 
             if self._actual_pos > 0: 
                 self._actual_pos -= 1
+                
         #right
         else:
             if self._actual_pos < self._axe_x + 1:
@@ -105,9 +107,7 @@ class LineChart:
         for x in self._arange(self._min_x,max_x,step_x):
 
             if self._axe_x == self._actual_pos:
-                color_line = (255,0,0)
-               # self._view.text((left+self._scale_x*(x-self._min_x)-5, top+10), unicode(formatter(x)), font= ('normal',10,FONT_BOLD))
-               
+                color_line = (255,0,0)            
             else:
                 color_line = (0,0,0)
             
@@ -118,6 +118,14 @@ class LineChart:
                 
             self._view.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
             self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
+
+            if self._axe_x == self._actual_pos:
+                tl = (left+self._scale_x*(x-self._min_x)-5, top+7)
+                bbox = self._view.measure_text(unicode(formatter(x)), font=('normal',10,FONT_BOLD))[0]
+                t = (tl[0]-bbox[0],tl[1]-bbox[1])
+                self._view.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = (255,255,255))                       
+                self._view.text((left+self._scale_x*(x-self._min_x)-5, top+15), unicode(formatter(x)), font= ('normal',10,FONT_BOLD))
+            
             self._axe_x +=1
             
         for y in self._arange(self._min_y,max_y,step_y):
