@@ -18,31 +18,35 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 from __future__ import generators
-from graphics import *
-from appuifw import *
-import key_codes
+import graphics, appuifw, key_codes
+
 
 # linechart.py - Line Chart Plotter for PyS60
-# @version 0.5
-# @date:  05/11/2008
+# @version 0.51
+# @date:  06/11/2008
 
 class LineChart:
     
     ##The constructor.
-    # @param canvas: The graphics component
-    # @param xyrange: The list with x and y range [min_x,max_x,step_x,min_y,max_y,step_y]
-    # @param xs: The list with x series 
-    # @param ys: The list with the y series     
-    # @param subtitle: the subtitle for x axe
-    # @param color: The color used to fill the line
-    # @param colorBack: The background color
-    # @param formatter: The format of the series composed in the chart
-    def __init__(self,canvas,xyrange,xs,ys=None,subtitle="", color = (255,0,0),
+    # @param xyrange The list with x and y range [min_x,max_x,step_x,min_y,max_y,step_y]
+    # @param xs The list with x series 
+    # @param ys The list with the y series     
+    # @param subtitle the subtitle for x axe
+    # @param color The color used to fill the line
+    # @param colorBack The background color
+    # @param formatter The format of the series composed in the chart
+    def __init__(self,xyrange,xs,ys=None,subtitle="", color = (255,0,0),
                   colorBack=(255,255,255),formatter=lambda x:x):
-        self._view = canvas
+
+        self._img = graphics.Image.new((0,0))
+        self._view = appuifw.Canvas(redraw_callback= self._OnUpdate)
+        appuifw.app.body = self._view
+        
         self._view.bind(key_codes.EKeyLeftArrow,lambda: self._traverse(1))
         self._view.bind(key_codes.EKeyRightArrow,lambda: self._traverse(0))
-        self._width,self._height = self._view.size
+
+        self._img = graphics.Image.new(self._view.size)
+        self._width,self._height = self._img.size        
         self._position = None
         self._min_x = None
         self._min_y = None
@@ -57,6 +61,7 @@ class LineChart:
         self._formatter = formatter
         self._xs = xs
         self._ys = ys
+        
         self._setPosition()
         self._set_axes()
         self._plot()
@@ -74,23 +79,30 @@ class LineChart:
                 
         #right
         else:
-            if self._actual_pos < self._axe_x + 1:
+            if self._actual_pos < self._axe_x:
                 self._actual_pos += 1
                 self._set_axes()
                 self._plot()
 
+    ##Handler for the paint the scren
+     # @param self The object pointer.           
+     # @param rect The screen itself.
+    def _OnUpdate(self,rect):
+        self._view.blit(self._img)
+        
+
     ##Defines the ranges of the graph in the screen.
     def _setPosition(self):
-        left = self._view.measure_text(unicode(float(self._xyrange[4])), font=('normal',10,FONT_BOLD))[1]
+        left = self._view.measure_text(unicode(float(self._xyrange[4])), font=('normal',10,graphics.FONT_BOLD))[1]
         self._position = [left+2,self._height-40,self._width-10,10]
         
      
      
     ## Iterator for generate random numbers
     #  @param self The object pointer.  
-    #  @param start: The first number of the series
-    #  @param stop: The last number of the series
-    #  @param step:  The incrementator given
+    #  @param start The first number of the series
+    #  @param stop The last number of the series
+    #  @param step  The incrementator given
     def _arange(self,start, stop=None, step=None):
         if stop is None:
             stop = float(start)
@@ -111,9 +123,11 @@ class LineChart:
         self._min_x,max_x,step_x,self._min_y,max_y,step_y = self._xyrange
         self._scale_x = float(right - left)/(max_x-self._min_x)
         self._scale_y = float(bottom - top)/(max_y-self._min_y)
-        self._view.clear()
-        self._view.rectangle([(left,top),(right+1,bottom+1)],0,fill = self._colorBack)
+        
+        self._img.clear()
+        self._img.rectangle([(left,top),(right+1,bottom+1)],0,fill = self._colorBack)
         self._axe_x = 0
+        
         for x in self._arange(self._min_x,max_x,step_x):
 
             if self._axe_x == self._actual_pos:
@@ -123,28 +137,27 @@ class LineChart:
             
             #self._view.text((15+self._scale_x*(x-self._min_x), self._height-24), unicode(formatter(x)), font= ('normal',10,FONT_BOLD))
             for z in range(top,bottom,3):
-                self._view.point((left+self._scale_x*(x-self._min_x),z), outline = color_line)
-                self._view.point((left+self._scale_x*(x-self._min_x),z+1), outline = color_line)
-                
-            self._view.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
-            self._view.point((left+self._scale_x*(x-self._min_x), top+1), 0)
+                self._img.point((left+self._scale_x*(x-self._min_x),z), outline = color_line)
+                self._img.point((left+self._scale_x*(x-self._min_x),z+1), outline = color_line)            
+            self._img.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
+            self._img.point((left+self._scale_x*(x-self._min_x), top+1), 0)
 
             if self._axe_x == self._actual_pos:
                 tl = (left+self._scale_x*(x-self._min_x)-5, top+7)
-                bbox = self._view.measure_text(unicode(self._formatter(x)), font=('normal',10,FONT_BOLD))[0]
+                bbox = self._view.measure_text(unicode(self._formatter(x)), font=('normal',10,graphics.FONT_BOLD))[0]
                 t = (tl[0]-bbox[0],tl[1]-bbox[1])
-                self._view.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = (255,255,255))                       
-                self._view.text((left+self._scale_x*(x-self._min_x)-5, top+15), unicode(self._formatter(x)), font= ('normal',10,FONT_BOLD))
+                self._img.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = (255,255,255))                       
+                self._img.text((left+self._scale_x*(x-self._min_x)-5, top+15), unicode(self._formatter(x)), font= ('normal',10,graphics.FONT_BOLD))
             
             self._axe_x +=1
             
         for y in self._arange(self._min_y,max_y,step_y):
-            self._view.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(self._formatter(y)), font= ('normal',10,FONT_BOLD))
+            self._img.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(self._formatter(y)), font= ('normal',10,graphics.FONT_BOLD))
             for i in range(left,right,3):            
-                self._view.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
-                self._view.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
-            self._view.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
-            self._view.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)
+                self._img.point((i,bottom-self._scale_y*(y-self._min_y)), 0)
+                self._img.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
+            self._img.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
+            self._img.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)
             
        
             
@@ -155,16 +168,18 @@ class LineChart:
         if self._ys == None:
             self._ys = self._xs
             self._xs = range(len(self._ys))
+            
         left,bottom,right,top = self._position
         last = left + (self._xs[0] - self._min_x) * self._scale_x, bottom - (self._ys[0]-self._min_y) * self._scale_y    
+
         for i in range(1, len(self._ys)):
             p = left + (self._xs[i] - self._min_x) * self._scale_x, bottom - (self._ys[i]-self._min_y) * self._scale_y 
-            self._view.line([last, p], self._color)
+            self._img.line([last, p], self._color)
             last = p
-        self._view.point(last,self._color)
+        self._img.point(last,self._color)
 
         #The subtitle
-        self._view.rectangle([(2,bottom+17),(15,self._height-4)],0,fill = self._color )
-        self._view.text((17,self._height-5), self._subtitle, font= ('normal',13))
+        self._img.rectangle([(2,bottom+17),(15,self._height-4)],0,fill = self._color )
+        self._img.text((17,self._height-5), self._subtitle, font= ('normal',13))
        
-            
+        self._OnUpdate(None)      
