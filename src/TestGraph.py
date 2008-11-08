@@ -39,7 +39,7 @@ def line_example01():
   
 
 def line_example02():
-    chart = LineChart(app.body.size,[0,125,25,0,125,25], [0.0,22.0,50.0,62.0,70.0,85.0],[0.0,25.0,50.0,30.0,20.0,80.0] , subtitle="Producao", legend = ["Jan","Feb","Mar"], colorBack = (128,128,128))  
+    chart = LineChart(app.body.size,[0,125,25,0,125,25], [0.0,22.0,50.0,62.0,70.0,85.0],[0.0,25.0,50.0,30.0,20.0,80.0] , subtitle="Producao", legend = ["Jan","Feb","Mar","Apr","May","Jun"], colorBack = (128,128,128))  
 
 def pizza_chart():
     pass
