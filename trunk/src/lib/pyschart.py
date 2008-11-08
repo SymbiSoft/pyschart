@@ -132,16 +132,17 @@ class LineChart:
 
         self._axe_x = 0
         
-        
-        for x in self._arange(self._min_x,max_x,step_x):         
-            self._img.text((15+self._scale_x*(x-self._min_x), self._height-24), unicode(self._formatter(x)), font= ('normal',10,graphics.FONT_BOLD))
+        #Plot the data subtitles.
+        for x in self._arange(self._min_x,max_x,step_x):
+            if not self._legend:
+               self._img.text((15+self._scale_x*(x-self._min_x), self._height-24), unicode(self._formatter(x)), font= ('normal',10,graphics.FONT_BOLD))
             for z in range(top,bottom,3):
                 self._img.point((left+self._scale_x*(x-self._min_x),z),0)
                 self._img.point((left+self._scale_x*(x-self._min_x),z+1),0)            
             self._img.point((left+self._scale_x*(x-self._min_x), bottom-1), 0)
             self._img.point((left+self._scale_x*(x-self._min_x), top+1), 0)
 
-            
+        #Plot y data set.    
         for y in self._arange(self._min_y,max_y,step_y):
             self._img.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(self._formatter(y)), font= ('normal',10,graphics.FONT_BOLD))
             for i in range(left,right,3):            
@@ -149,7 +150,8 @@ class LineChart:
                 self._img.point((i+1,bottom-self._scale_y*(y-self._min_y)), 0)   
             self._img.point((left+1, bottom-self._scale_y*(y-self._min_y)), 0)
             self._img.point((right-1,bottom-self._scale_y*(y-self._min_y)), 0)
-
+            
+       #Plot x data set. 
         for x in self._xs:
             if self._axe_x == self._actual_pos:
                 for z in range(top,bottom,3):
@@ -160,7 +162,7 @@ class LineChart:
 
                 tl = (left+self._scale_x*(x-self._min_x)-5, top+7)
                 if self._legend:
-                    legend = unicode(self._legend[self._axe_x] + ": ") + unicode(self._formatter(x)) + "," + unicode(self._formatter(self._ys[self._actual_pos]))
+                    legend = unicode(self._legend[self._axe_x] + ": ")  + unicode(self._formatter(self._ys[self._actual_pos]))
                 else:
                     legend = unicode(self._formatter(x)) + "," + unicode(self._formatter(self._ys[self._actual_pos]))
                 bbox = self._view.measure_text(legend, font=('normal',10,graphics.FONT_BOLD))[0]
