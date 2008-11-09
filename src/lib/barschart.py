@@ -150,6 +150,7 @@ class BarChart:
                         t = (tl[0]-bbox[0],tl[1]-bbox[1])
                     else:
                         outline = self._colors[data_index]
+                        
                     x1 = left + scale_x * (x) - 17
                     x2 = left + scale_x * (x) + 17
                     y = bottom - self._scale_y * float(self._data[data_index][1]) 
