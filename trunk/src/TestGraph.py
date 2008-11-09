@@ -26,8 +26,8 @@
 
 from appuifw import *
 import e32
-from pyschart import LineChart
-
+from linechart import LineChart
+from barchart import BarChart
 
 def quit():
     print "Exit key pressed"
@@ -45,8 +45,8 @@ def pizza_chart():
     pass
 
 
-def columns_chart():
-    pass
+def bars_chart():
+    chart = BarChart(app.body.size,[0,90,22.5],[("Paraguay",30),("Brazil",60), ("Peru",20), ("Argentina",40)], colors = [(255,0,0),(16,78,139),(205,127,50),(255,140,0)], colorBack = (128,128,128))
 
 
 canvas = Canvas()
@@ -54,7 +54,7 @@ canvas = Canvas()
 app.body = canvas
 
 app.menu=[(u"Pizza Chart", pizza_chart),
-                  (u"Columns Chart", columns_chart),
+                  (u"Bar Chart", bars_chart),
                   (u"Line Chart", ((u"Example 01", line_example01),
                                (u"Example 02", line_example02)))]
 
