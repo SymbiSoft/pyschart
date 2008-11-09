@@ -120,8 +120,6 @@ class BarChart:
         self._img.clear()
         self._img.rectangle([(left,top),(right+1,bottom+1)],0,fill = self._colorBack)
 
-        self._axe_x = 0
-
         #Plot y data set.    
         for y in self._arange(self._min_y,max_y,step_y):
             self._img.text((2,bottom+2-self._scale_y*(y-self._min_y)), unicode(self._formatter(y)), font= self.__class__.FONT)
@@ -137,15 +135,32 @@ class BarChart:
     # @param self The object pointer.
     def _plot(self):
         left,bottom,right,top = self._position
-        max_x = (len(self._data)+2) * 20
+        max_x = (len(self._data)) * 20
         scale_x = float(right - left)/ max_x
         index = 1
+        data_index = 0
+        self._axe_x = 0
         for x in self._arange(0,max_x,10):
-            
-            if index % 2 == 0: 
+            if index % 2 == 0:
+                    if self._axe_x == self._actual_pos:
+                        outline = (158,158,158)
+                        tl = (left+ scale_x*(x)-30, top+7)
+                        legend = unicode(self._data[self._actual_pos][0] + ": ") + unicode(self._formatter(self._data[self._actual_pos][1]))
+                        bbox = self._view.measure_text(legend,font= self.__class__.FONT)[0]
+                        t = (tl[0]-bbox[0],tl[1]-bbox[1])
+                    else:
+                        outline = self._colors[data_index]
                     x1 = left + scale_x * (x) - 17
                     x2 = left + scale_x * (x) + 17
-                    self._img.rectangle([(x1,top),(x2,bottom+1)],0,fill = (255,255,255))
+                    y = bottom - self._scale_y * float(self._data[data_index][1]) 
+                    self._img.rectangle([(x1,y),(x2,bottom+1)],outline, fill = self._colors[data_index])
+
+                    if self._axe_x == self._actual_pos:
+                        self._img.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = (255,255,255))
+                        self._img.text((left+scale_x*(x)-30, top+15), legend, font= self.__class__.FONT)
+
+                    data_index +=1
+                    self._axe_x +=1        
             index += 1
 
         self._OnUpdate(None)     
