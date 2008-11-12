@@ -22,7 +22,7 @@ import graphics, appuifw, key_codes
 
 
 # piechart.py - Pie Chart Plotter for PyS60
-# @version 0.1
+# @version 0.2
 # @date:  11/11/2008
 
 
@@ -57,6 +57,7 @@ class PieChart:
         self._colors = colors
         self._formatter = formatter
         self._data = data
+        self._total = reduce(lambda x,y: x+y, data)
         
         self._setPosition()
         self._plot()
