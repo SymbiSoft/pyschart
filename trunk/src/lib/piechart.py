@@ -18,12 +18,12 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 from __future__ import generators
-import graphics, appuifw, key_codes
+import graphics, appuifw, key_codes, math
 
 
 # piechart.py - Pie Chart Plotter for PyS60
 # @version 0.2
-# @date:  11/11/2008
+# @date:  12/11/2008
 
 
 class PieChart:
@@ -57,8 +57,7 @@ class PieChart:
         self._colors = colors
         self._formatter = formatter
         self._data = data
-        self._total = reduce(lambda x,y: x+y, data)
-        
+        self._total = reduce(lambda x,y: x+y, map(lambda x: x[1], data))        
         self._setPosition()
         self._plot()
         
@@ -71,11 +70,16 @@ class PieChart:
         if code:
             if self._actual_pos > 0:
                 self._actual_pos -= 1
-                self._plot()
-
+            else:
+                self._actual_pos = len(self._data)-1
+            self._plot()
+             
         #right
-        elif self._actual_pos < len(self._data)-1:
-            self._actual_pos +=1
+        else:
+            if self._actual_pos < len(self._data)-1:
+                self._actual_pos +=1
+            else:
+                self._actual_pos = 0
             self._plot()
 
 
@@ -88,11 +92,43 @@ class PieChart:
 
    ##Defines the ranges of the graph in the screen
     def _setPosition(self):
-        self._position = [10, self._height-30,self._width-10,10]
+        self._position = [10, self._height-60,self._width-10,10]
 
 
 
   #Plot the real graph.
     # @param self The object pointer.
     def _plot(self):
-        pass
+        left,bottom,right,top = self._position
+        rate_conversion =  math.pi / 180.0
+        self._axe_x = 0
+        aux = 0.0
+        color_index = 0
+
+        self._img.clear()
+        
+        for (label,value) in self._data:
+
+            if self._axe_x == self._actual_pos:
+                outline = (158,158,158)
+                _width = 4
+            else:
+                outline = self._colors[color_index]
+                _width = 1
+                
+            calculo =  (float(value) / self._total) * 360
+            calculo = math.ceil(calculo)
+            if aux + calculo > 360:
+                aux_end = 360
+            else:
+                aux_end =  aux + calculo
+            self._img.pieslice([(left,top),(right,bottom)], aux*rate_conversion, aux_end * rate_conversion , outline, width = _width,  fill=self._colors[color_index])
+            aux += calculo
+            color_index +=1
+            self._axe_x +=1
+            self._OnUpdate(None)
+            
+
+
+
+        
