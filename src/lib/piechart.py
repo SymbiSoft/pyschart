@@ -22,8 +22,8 @@ import graphics, appuifw, key_codes, math
 
 
 # piechart.py - Pie Chart Plotter for PyS60
-# @version 0.2
-# @date:  12/11/2008
+# @version 0.1
+# @date:  11/11/2008
 
 
 class PieChart:
@@ -49,6 +49,7 @@ class PieChart:
         
         self._width,self._height = self._img.size
         self._position = None
+        self._index = None
 
         self._axe_x = 0
         self._actual_pos = 0
@@ -61,8 +62,6 @@ class PieChart:
         self._setPosition()
         self._plot()
         
-
-
 
    ##Callback method for key events (navigates into the chart)
     def _traverse(self,code):
@@ -92,12 +91,16 @@ class PieChart:
 
    ##Defines the ranges of the graph in the screen
     def _setPosition(self):
-        self._position = [10, self._height-60,self._width-10,10]
+        l = map(lambda x: len(x[0]), self._data)
+        self._index = l.index(max(l))
+        box = self._view.measure_text(unicode(self._data[0][0]), font=('normal',15))[0]
+        diff = box[1] - 25 
+        self._position = [10, self._height+diff,self._width-10,10]
+        
 
 
-
-  #Plot the real graph.
-    # @param self The object pointer.
+  #Plot the real graph. 
+    # @param self The object  pointer.
     def _plot(self):
         left,bottom,right,top = self._position
         rate_conversion =  math.pi / 180.0
@@ -112,6 +115,13 @@ class PieChart:
             if self._axe_x == self._actual_pos:
                 outline = (158,158,158)
                 _width = 4
+                text = unicode(label + ": " + str(float(value)))
+                tl = (right/3, bottom+10)
+                bbox = self._view.measure_text(unicode(self._data[self._index][0] + ": " + str(float(self._data[self._index][1]))), font=('normal',15))[0]
+                t = (tl[0]-bbox[0],tl[1]-bbox[1])
+                self._img.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = self._colors[color_index])
+                self._img.text((right/3, bottom+21), text, font= ('normal',15))
+
             else:
                 outline = self._colors[color_index]
                 _width = 1
