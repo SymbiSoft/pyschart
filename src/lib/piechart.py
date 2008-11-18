@@ -22,8 +22,8 @@ import graphics, appuifw, key_codes, math
 
 
 # piechart.py - Pie Chart Plotter for PyS60
-# @version 0.1
-# @date:  11/11/2008
+# @version 0.2
+# @date:  17/11/2008
 
 
 class PieChart:
@@ -119,8 +119,9 @@ class PieChart:
                 tl = (right/3, bottom+10)
                 bbox = self._view.measure_text(unicode(self._data[self._index][0] + ": " + str(float(self._data[self._index][1]))), font=('normal',15))[0]
                 t = (tl[0]-bbox[0],tl[1]-bbox[1])
-                self._img.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = self._colors[color_index])
-                self._img.text((right/3, bottom+21), text, font= ('normal',15))
+                #self._img.rectangle((t[0]+bbox[0]-4,t[1]+bbox[1]-4,t[0]+bbox[2]+4,t[1]+bbox[3]+4),outline=(0,0,0), fill = self._colors[color_index])
+                self._img.text((t[0] + bbox[0], t[1]+bbox[1]+ 15), text, fill = self._colors[color_index], font= ('normal',15))
+                #self._img.polygon(((50,25),(100,50),(100,0)),outline = 0xFFFF00)
 
             else:
                 outline = self._colors[color_index]
