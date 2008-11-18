@@ -43,7 +43,7 @@ def line_example02():
     chart = LineChart(app.body.size,[0,125,25,0,125,25], [0.0,22.0,50.0,62.0,70.0,85.0],[0.0,25.0,50.0,30.0,20.0,80.0] , subtitle="Producao", legend = ["Jan","Feb","Mar","Apr","May","Jun"], colorBack = (128,128,128))  
 
 def pie_chart():
-    chart = PieChart(app.body.size,[("Brazil",50),("Germany",88), ("Italy",71), ("Argentina",45), ("Uruguay",22)], colors = [(255,0,0),(16,78,139),(205,127,50),(255,140,0), (0,0,0)], colorBack = (128,128,128))
+    chart = PieChart(app.body.size ,[("Brazil",50),("Germany",88), ("Italy",71), ("Argentina",45), ("Uruguay",22)], colors = [(0,255,0),(16,78,139),(205,127,50),(255,140,0), (255,0,0)], colorBack = (128,128,128))
 
 
 def bars_chart():
